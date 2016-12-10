@@ -10,12 +10,55 @@
     <!-- 根据用户ID，查询用户信息 -->
     <!--
         [id]：statement的id，要求在命名空间内唯一
-        [parameterType]：入参的java类型
+        [parameterType]：入参的java类型，并且入参只有一个
         [resultType]：查询出的单条结果集对应的java类型
-        [#{}]： 表示一个占位符?
+        [#{}]： 表示一个占位符?,不能直接用？做占位符,并且如果有参数一定要写，而且参数的名称任意
         [#{id}]：表示该占位符待接收参数的名称为id。注意：如果参数为简单类型时，#{}里面的参数名称可以是任意定义
      -->
     <select id="findUserById" parameterType="int" resultType="rj.po.User">
-        SELECT *FROM USER where id=#{id}
+        SELECT *FROM USER WHERE id=#{id}
     </select>
+
+    <!-- 根据用户名称模糊查询用户信息列表 -->
+    <!--
+            [${}]：表示拼接SQL字符串
+             [${value}]：表示要拼接的是简单类型参数。
+             注意：
+            1、如果参数为简单类型时，${}里面的参数名称必须为value
+            2、${}会引起SQL注入，一般情况下不推荐使用。但是有些场景必须使用${}，比如order by ${colname}
+            并且输出时，会原样输出
+    -->
+
+    <select id="findUsersByName" parameterType="String" resultType="rj.po.User">
+        SELECT *FROM USER WHERE username LIKE  '%${value}%'
+    </select>
+
+
+    <!-- 添加用户 -->
+    <!-- 如果主键的值是通过MySQL自增机制生成的，那么我们此处不需要再显示的给ID赋值 -->
+    <!--
+		[selectKey标签]：通过select查询来生成主键，使用之后，自动在user内有了主键的值，相当于持久化状态得到id
+		[keyProperty]：指定存放生成主键的属性
+		[resultType]：生成主键所对应的Java类型
+		[order]：指定该查询主键SQL语句的执行顺序，相对于insert语句
+		[last_insert_id]：MySQL的函数，要配合insert语句一起使用
+-->
+
+    <insert id="insertUser" parameterType="rj.po.User">
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+
+        INSERT INTO USER(username,birthday,sex,address) VALUES(#{username},#{birthday},#{sex},#{address})
+    </insert>
+
+
+    <!--根据id删除用户-->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM USER WHERE id=#{id}
+    </delete>
+    <!--根据原用户更新用户-->
+    <update id="updateUser" parameterType="rj.po.User">
+        UPDATE USER SET username=#{username},sex=#{sex},address=#{address} WHERE id=#{id}
+    </update>
 </mapper>
