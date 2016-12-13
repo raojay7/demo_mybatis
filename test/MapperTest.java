@@ -143,6 +143,7 @@ public class MapperTest {
         //List<User> list=mapper.findUserByIdList(vo);
         List<User> list=mapper.findUserByIdList(idList);
         System.out.println(list);
+        System.out.println("ceshi");
         sqlSession.close();
 
     }
