@@ -3,6 +3,26 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="rj.mapper.UserMapper">
+	<!-- 定义SQL片段 -->
+	<!--
+        [sql标签]：定义一个SQL片段
+        [id]：SQL片段的唯一标识
+        建议：
+            1、SQL片段中的内容最好是以单表来定义
+            2、如果是查询字段，则不要写上SELECT
+            3、如果是条件语句，则不要写上WHERE
+     -->
+	<sql id="selct_user_where">
+		<if test="user != null">
+			<if test="user.sex != null and user.sex != ''">
+				AND sex = #{user.sex}
+			</if>
+			<if test="user.username != null and user.username != ''">
+				AND username LIKE '%${user.username}%'
+			</if>
+		</if>
+	</sql>
+
 
 	<!-- 根据用户ID查询用户信息 -->
 	<select id="findUserById" parameterType="int" resultType="User">
@@ -30,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		(username,birthday,sex,address)
 		VALUES(#{username},#{birthday},#{sex},#{address})
 	</insert>
-	<!--多条件查询，利用ognl表达式-->
+	<!-- 综合查询用户信息，需要传入查询条件复杂，比如（用户信息、订单信息、商品信息） -->
 	<select id="findUserList" parameterType="UserQueryVo" resultType="User">
 		SELECT *FROM user WHERE
 		username LIKE '%${user.username}%' AND sex=#{user.sex}
@@ -44,7 +64,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 综合查询用户信息总数，需要传入查询条件复杂，比如（用户信息、订单信息、商品信息） -->
 	<select id="findUsersCount" parameterType="UserQueryVO"
 			resultType="int">
-		SELECT count(1) FROM USER WHERE sex = #{user.sex} AND username	LIKE '%${user.username}%'
+		SELECT count(1) FROM user
+		<where>
+			<include refid="selct_user_where"/>
+		</where>
+		
+
 	</select>
 
 
@@ -58,6 +83,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         [column]：SQL查询的列名，如果列有别名，则该处填写别名
         [property]：pojo对象的属性名
     -->
+
+
 	<!--
 	这样不行，由于有别名，查询不到，返回的结果会为null
 	<select id="findUserByIdResultMap" resultType="user" parameterType="int">
@@ -72,6 +99,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT id id_,username username_,sex sex_ FROM USER WHERE id = #{id}
 	</select>
 
+	<select id="findUsersByQueryVO" parameterType="userQueryVo" resultType="User">
+		SELECT *FROM user
+		<where>
+			<include refid="selct_user_where"/>
+		</where>
+	</select>
 
+	<!-- [foreach标签]：表示一个foreach循环 -->
+	<!-- [collection]：集合参数的名称，如果是直接传入集合参数，则该处的参数名称只能填写[list]。 -->
+	<!-- [item]：每次遍历出来的对象 -->
+	<!-- [open]：开始遍历时拼接的串 -->
+	<!-- [close]：结束遍历时拼接的串 -->
+	<!-- [separator]：遍历出的每个对象之间需要拼接的字符 -->
+	<!--
+	<select id="findUserByIdList" parameterType="userQueryVo" resultType="user">
+		select * from user
+		<where>
+			AND id in
+			<if test="idList != null and idList.size > 0">
+				<foreach collection="idList" item="id" open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	-->
+
+	<!--直接传入list-->
+	<select id="findUserByIdList" parameterType="java.util.List" resultType="user">
+		select * from user
+		<where>
+			AND id in
+			<if test="list != null and list.size > 0">
+				<foreach collection="list" item="id" open="(" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</select>
 </mapper>
 

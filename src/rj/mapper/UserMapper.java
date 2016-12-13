@@ -24,4 +24,9 @@ public interface UserMapper {
     int findUsersCount(UserQueryVo vo);
     //7、结果别名查询
     User findUserByIdResultMap(int id);
+    //8学习动态查询sql片段
+    List<User>  findUsersByQueryVO(UserQueryVo vo);
+    //9学习动态查询for-each循环
+    List<User> findUserByIdList(UserQueryVo vo);
+    List<User> findUserByIdList(List list);
 }

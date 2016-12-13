@@ -9,6 +9,7 @@ import rj.po.User;
 import rj.po.UserQueryVo;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,9 @@ public class MapperTest {
         u.setSex(1);
         u.setUsername("小明");
         vo.setUser(u);
-        List<User> list=mapper.findUserList(vo);
+        //List<User> list=mapper.findUserList(vo);
+        //调用动态查询
+        List<User> list=mapper.findUsersByQueryVO(vo);
         int count=mapper.findUsersCount(vo);
         System.out.println(list);
         System.out.println(count);
@@ -122,4 +125,27 @@ public class MapperTest {
         System.out.println(u);
         sqlSession.close();
     }
+
+    @Test
+    public void findUserByIdListTest(){
+
+
+        // 创建UserMapper对象
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        // 由mybatis通过sqlsession来创建代理对象
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        List<Integer> idList=new ArrayList<>();
+        idList.add(1);
+        idList.add(10);
+        idList.add(16);
+        //UserQueryVo vo=new UserQueryVo();
+        //vo.setIdList(idList);
+        //List<User> list=mapper.findUserByIdList(vo);
+        List<User> list=mapper.findUserByIdList(idList);
+        System.out.println(list);
+        sqlSession.close();
+
+    }
+
+
 }
