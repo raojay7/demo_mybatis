@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper    
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rj.mapper.UserMapper">
+
+	<!-- 根据用户ID查询用户信息 -->
+	<select id="findUserById" parameterType="int" resultType="User">
+		SELECT
+		* FROM USER WHERE id =#{id}
+	</select>
+
+	<!--同样的mapper映射文件，返回单个对象和对象列表时，
+	mapper接口在生成动态代理的时候，
+	会根据返回值的类型，决定调用selectOne方法还是selectList方法。
+	-->
+	<!--模糊查找-->
+	<select id="findUsersByName" parameterType="java.lang.String" resultType="User">
+		SELECT *FROM USER WHERE username LIKE  '%${value}%'
+	</select>
+
+	<!-- 添加用户 -->
+	<insert id="insertUser" parameterType="rj.po.User">
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+
+		INSERT INTO USER
+		(username,birthday,sex,address)
+		VALUES(#{username},#{birthday},#{sex},#{address})
+	</insert>
+	<!--多条件查询，利用ognl表达式-->
+	<select id="findUserList" parameterType="UserQueryVo" resultType="User">
+		SELECT *FROM user WHERE
+		username LIKE '%${user.username}%' AND sex=#{user.sex}
+	</select>
+	<!--根据hashmap查询,注意username为map的key值-->
+	<select id="findUserByHashmap" parameterType="map" resultType="user">
+		SELECT *FROM user WHERE
+		username LIKE '%${username}%'
+	</select>
+
+	<!-- 综合查询用户信息总数，需要传入查询条件复杂，比如（用户信息、订单信息、商品信息） -->
+	<select id="findUsersCount" parameterType="UserQueryVO"
+			resultType="int">
+		SELECT count(1) FROM USER WHERE sex = #{user.sex} AND username	LIKE '%${user.username}%'
+	</select>
+
+
+
+	<!-- 定义resultMap -->
+	<!-- 
+        [id]：定义resultMap的唯一标识
+        [type]：定义该resultMap最终映射的pojo对象
+        [id标签]：映射结果集的唯一标识列，如果是多个字段联合唯一，则定义多个id标签
+        [result标签]：映射结果集的普通列
+        [column]：SQL查询的列名，如果列有别名，则该处填写别名
+        [property]：pojo对象的属性名
+    -->
+	<!--
+	这样不行，由于有别名，查询不到，返回的结果会为null
+	<select id="findUserByIdResultMap" resultType="user" parameterType="int">
+		SELECT id id_,username username_,sex sex_ FROM USER WHERE id = #{id}
+	</select>-->
+	<resultMap id="userResultMap" type="user">
+		<id column="id_" property="id"/>
+		<result column="username_" property="username"/>
+		<result column="sex_" property="sex"/>
+	</resultMap>
+	<select id="findUserByIdResultMap" resultMap="userResultMap" parameterType="int">
+		SELECT id id_,username username_,sex sex_ FROM USER WHERE id = #{id}
+	</select>
+
+
+</mapper>
+

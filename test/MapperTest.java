@@ -6,9 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import rj.mapper.UserMapper;
 import rj.po.User;
+import rj.po.UserQueryVo;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 隽 on 2016/12/13.
@@ -70,4 +73,53 @@ public class MapperTest {
         sqlSession.close();
     }
 
+
+    //测试符合条件的个数和查询的结果
+    @Test
+    public void findUserListTest(){
+
+
+        // 创建UserMapper对象
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        // 由mybatis通过sqlsession来创建代理对象
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        UserQueryVo vo=new UserQueryVo();
+        User u=new User();
+        u.setSex(1);
+        u.setUsername("小明");
+        vo.setUser(u);
+        List<User> list=mapper.findUserList(vo);
+        int count=mapper.findUsersCount(vo);
+        System.out.println(list);
+        System.out.println(count);
+
+        sqlSession.close();
+    }
+    @Test
+    public void findUserByHashmapTest(){
+
+
+        // 创建UserMapper对象
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        // 由mybatis通过sqlsession来创建代理对象
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+        Map map=new HashMap();
+        map.put("username","哥");
+        List<User> list=mapper.findUserByHashmap(map);
+        System.out.println(list);
+        sqlSession.close();
+    }
+    @Test
+    public void findUserByIdResultMapTest(){
+
+
+        // 创建UserMapper对象
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        // 由mybatis通过sqlsession来创建代理对象
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+
+        User u=mapper.findUserByIdResultMap(1);
+        System.out.println(u);
+        sqlSession.close();
+    }
 }
