@@ -126,8 +126,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	-->
 
-	<!--直接传入list-->
-	<select id="findUserByIdList" parameterType="java.util.List" resultType="user">
+	<!--直接传入list,则参数类型只能写list-->
+	<select id="findUserByIdList" parameterType="list" resultType="user">
 		select * from user
 		<where>
 			AND id in
