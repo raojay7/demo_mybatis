@@ -5,7 +5,16 @@
 <configuration>
     <properties resource="db.properties"/>
 
+    <settings>
+        <!-- 开启延迟加载 ，默认值为true-->
+        <setting name="lazyLoadingEnabled" value="true"/>
 
+        <!-- 设置积极的懒加载,默认是true -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+
+        <!-- 二级缓存的总开关 -->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
     <typeAliases>
     <!-- 批量定义别名（推荐） -->
     <!-- [name]：指定批量定义别名的类包，默认的别名为类名（首字母大小写都可） -->

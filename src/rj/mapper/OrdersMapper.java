@@ -23,5 +23,6 @@ public interface OrdersMapper
     //查询用户及用户购买商品信息（多对多映射之使用resultMap）
     public List<User> findUserAndItemsRstMap();
 
-
+    //使用懒加载
+    List<OrdersExt> findOrderAndUserLazyLoading();
 }
