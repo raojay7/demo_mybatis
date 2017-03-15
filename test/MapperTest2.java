@@ -7,6 +7,7 @@ import org.junit.Test;
 import rj.mapper.OrdersMapper;
 import rj.po.Orders;
 import rj.po.OrdersExt;
+import rj.po.User;
 
 import java.io.InputStream;
 import java.util.List;
@@ -72,6 +73,23 @@ public class MapperTest2
         for (Orders o:list)
         {
             System.out.println(o);
+        }
+
+        sqlSession.close();
+
+    }
+
+
+    @Test
+    public void findUserAndItemsRstMapTest()
+    {
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        OrdersMapper mapper = sqlSession.getMapper(OrdersMapper.class);
+        List<User> list=mapper.findUserAndItemsRstMap();
+
+        for (User u:list)
+        {
+            System.out.println(u);
         }
 
         sqlSession.close();

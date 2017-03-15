@@ -1,6 +1,7 @@
 package rj.po;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * pojo类
@@ -12,6 +13,18 @@ public class User {
     private Date birthday;
     private int sex;//1为男
     private String address;
+    // 订单信息
+    private List<Orders> ordersList;
+
+    public List<Orders> getOrdersList()
+    {
+        return ordersList;
+    }
+
+    public void setOrdersList(List<Orders> ordersList)
+    {
+        this.ordersList = ordersList;
+    }
 
     public int getId() {
         return id;

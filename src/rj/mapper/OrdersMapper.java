@@ -2,6 +2,7 @@ package rj.mapper;
 
 import rj.po.Orders;
 import rj.po.OrdersExt;
+import rj.po.User;
 
 import java.util.List;
 
@@ -18,5 +19,9 @@ public interface OrdersMapper
 
     // 查询订单信息及订单明细信息（一对多映射之使用resultMap）
     public List<Orders> findOrdersAndOrderdetailRstMap();
+
+    //查询用户及用户购买商品信息（多对多映射之使用resultMap）
+    public List<User> findUserAndItemsRstMap();
+
 
 }

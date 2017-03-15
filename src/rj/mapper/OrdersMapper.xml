@@ -90,5 +90,59 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		orders.id = orderdetail.orders_id
 	</select>
 
+
+	<!-- 定义UserAndItemsRstMap -->
+	<resultMap id="UserAndItemsRstMap" type="User">
+		<!-- 用户信息 -->
+		<!-- id：关联查询用户的唯一标示 -->
+		<id column="user_id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="address" property="address"/>
+
+		<!--订单信息-->
+		<collection property="ordersList" ofType="Orders">
+			<id column="id" property="id"/>
+			<result column="user_id" property="userId" />
+			<result column="number" property="number"/>
+			<result column="createtime" property="createtime"/>
+			<result column="note" property="note"/>
+			<!-- 订单明细信息（一个订单有多个订单明细） -->
+			<collection property="detailList" ofType="Orderdetail">
+				<id column="detail_id" property="id" />
+				<result column="items_id" property="itemsId" />
+				<result column="items_num" property="itemsNum" />
+				<!-- 商品信息 （一个订单明细对应一个商品） -->
+				<association property="items" javaType="Items">
+					<id column="items_id" property="id" />
+					<result column="items_name" property="name" />
+					<result column="items_detail" property="detail" />
+				</association>
+			</collection>
+		</collection>
+	</resultMap>
+
+
+	<!--查询用户及用户购买信息，多对多之间用resultmap-->
+	<select id="findUserAndItemsRstMap" resultMap="UserAndItemsRstMap">
+		Select
+		<include refid="select_orders" />
+		,
+		<include refid="select_user"/>
+		,
+		orderdetail.id detail_id,
+		orderdetail.items_id,
+		orderdetail.items_num,
+		items.name items_name,
+		items.detail items_detail
+		FROM
+		orders,
+		USER,
+		orderdetail,
+		items
+		WHERE user.`id` = orders.`user_id`
+		AND orders.`id` = orderdetail.`orders_id`
+		AND orderdetail.`items_id` = items.`id`
+
+	</select>
 </mapper>
 
